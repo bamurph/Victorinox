@@ -19,6 +19,8 @@ hs.window.setShadows(false)
 
 local mash      = {"cmd", "alt", "ctrl"}
 local mash_apps = {"cmd", "alt"}
+local opt       = {"alt"}
+local alt       = opt
 
 ext = {
   frame    = {},
@@ -32,19 +34,10 @@ ext = {
 
 
 -- Window Layouts
+local iMac = "iMac"
 local layout_code = {
-  {
-    name = {"Safari"},
-    func = function(index, win)
-        pushWindow(win,(1/3*2),0,(1/3),1)
-    end
-  },
-  {
-    name = {'Xcode'},
-    func = function(index, win)
-       pushWindow(win,0,0,(1/3*2),1)
-    end
-  }
+  {"Safari",  nil,         iMac, hs.layout.left50, nil, nil},
+  {"Xcode",   nil,         iMac, hs.layout.right50, nil, nil}
 }
 
 -- Hotkeys to apply layouts & position windows
@@ -57,4 +50,8 @@ hs.hotkey.bind(mash, "x", function() applyLayouts(layout_code) end)
 hs.hotkey.bind(mash, "R", function()
   hs.reload()
   print('config reloaded')
+end)
+
+hs.hotkey.bind(opt, "1", function ()
+  hs.layout.apply(layout_code)
 end)
