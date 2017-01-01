@@ -7,15 +7,22 @@ require('methods')
 
 
 -- A global variable for the Hyper Mode
-k = hs.hotkey.modal.new({}, "F17", "Enter Hyper")
+k = hs.hotkey.modal.new({}, "F17", "K-mode")
 
 -- Sequential Keybindings: e.g. Hyper-a, f for finder
 a = hs.hotkey.modal.new({}, "F16", "Sequential Hyper")
 pressedA = function() a:enter() end
 releasedA = function() end
-k:bind({}, 'a', "Sequential Hotkey", pressedA, releasedA)
+
+pressedAA = function() a:exit() end
+
+k:bind({}, 'a', "Enter A-Mode", pressedA, releasedA)
+a:bind({}, 'a', "Exit A-Mode", pressedAA, releasedA)
+
 apps = {
-  {'s', 'Spotify'}
+  {'s', 'Spotify'},
+  {'i', 'iTunes'},
+  {'c', 'Messages'}
 }
 for i, app in ipairs(apps) do
   a:bind({}, app[1], function() launch(app[2]); a:exit(); end)
