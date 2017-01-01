@@ -11,10 +11,20 @@ k = hs.hotkey.modal.new({}, "F17", "K-mode")
 
 -- Sequential Keybindings: e.g. Hyper-a, f for finder
 a = hs.hotkey.modal.new({}, "F16", "Sequential Hyper")
+
+-- Window Management Mode
+w = hs.hotkey.modal.new({}, "F19", "Window Management")
+
 pressedA = function() a:enter() end
 releasedA = function() end
-
 pressedAA = function() a:exit() end
+
+pressedW = function() w:enter() end
+releasedW = function() end
+pressedWW = function() w:exit() end
+
+k:bind({}, 'w', "Window Management Mode", pressedW, releasedW)
+w:bind({}, 'w', "Exit Window Management Mode", pressedWW, releasedW)
 
 k:bind({}, 'a', "Enter A-Mode", pressedA, releasedA)
 a:bind({}, 'a', "Exit A-Mode", pressedAA, releasedA)
@@ -74,21 +84,21 @@ for i, app in ipairs(singleapps) do
 end
 
 -- App Vars
-local browser = hs.window.find("Safari")
-local iterm   = hs.window.find("iTerm2")
-local code    = hs.window.find("Visual Studio Code")
-local finder  = hs.window.find("Finder")
-local xcode   = hs.window.find("Xcode")
+browser = hs.application.find("Safari"):mainWindow()
+iterm   = hs.application.find("iTerm2"):mainWindow()
+code    = hs.application.find("Code"):mainWindow()
+finder  = hs.application.find("Finder"):mainWindow()
+xcode   = hs.application.find("Xcode"):mainWindow()
 
 -- Variable Config
 hs.window.animationDuration = 0.0
 hs.window.setShadows(false)
 
-local hyper     = {"cmd", "alt", "ctrl", "shift"}
-local mash      = {"cmd", "alt", "ctrl"}
-local mash_apps = {"cmd", "alt"}
-local opt       = {"alt"}
-local alt       = opt
+hyper     = f18
+mash      = {"cmd", "alt", "ctrl"}
+mash_apps = {"cmd", "alt"}
+opt       = {"alt"}
+alt       = opt
 
 ext = {
   frame    = {},
@@ -99,31 +109,12 @@ ext = {
   watchers = {}
 }
 
--- Window Resize function
--- function aspectResize(frame, percent) 
---   local xResize = frame.w * percent 
---   local yResize = frame.h * percent
---   local xOffset = 0.5 * xResize
---   local yOffset = 0.5 * yResize
+--
+-- Window Layout & Repositioning 
+--
 
---   frame.x = frame.x + xOffset
---   frame.y = frame.y + yOffset
---   frame.w = frame.w + xResize
---   frame.h = frame.h + yResize
 
---   return frame
--- end
-
--- function windowAspectResize(window, percent) 
---   local f = window:frame()
---   local nf = aspectResize(f, percent)
---   window:setFrame(nf)
---   return window
--- end
-
--- Move windows
-
-hs.hotkey.bind(mash, "-", function()
+k:bind(hyper, "-", function()
   local win = hs.window.focusedWindow()
   -- windowAspectResize(win, -0.5)
   local f = win:frame()
@@ -134,7 +125,7 @@ hs.hotkey.bind(mash, "-", function()
   win:setFrame(f)
 end)
 
-hs.hotkey.bind(mash, "=", function()
+k:bind(hyper, "=", function()
   local win = hs.window.focusedWindow()
   local f = win:frame()
   f.x = f.x - (0.05 * f.w)
@@ -144,33 +135,37 @@ hs.hotkey.bind(mash, "=", function()
   win:setFrame(f)
 end)
 
-hs.hotkey.bind(mash, "7", function() 
+k:bind({}, "7", function() 
   local win = hs.window.focusedWindow()
   win:centerOnScreen()
 end)
 
 -- Window Layouts
 local iMac = "iMac"
-local layout_code = {
+local layout_Xcode = {
   {"Safari",  nil,         iMac, hs.layout.left30, nil, nil},
   {"Xcode",   nil,         iMac, hs.layout.right70, nil, nil}
 }
 
 -- Hotkeys to apply layouts & position windows
-hs.hotkey.bind(mash, "x", function() 
-  applyLayouts(layout_code) 
+k:bind({}, "1", function() 
+  hs.layout.apply(layout_Xcode)
+  xcode:focus()
+  safari:raise()
 end)
 
-hs.hotkey.bind(mash, "1", function ()
-  hs.layout.apply(layout_code)
-  Xcode:raise()
-  Xcode:focus()
+k:bind({}, "1", function ()
+  hs.layout.apply(layout_Xcode)
+  local x = xcode:application()
+  local xw = x:mainWindow()
+  xw:raise()
+  xw:focus()
 end)
 
 -------------------------------------------------------------------------------
 -- reload configuration -- Keep this last --
 -------------------------------------------------------------------------------
-hs.hotkey.bind(mash, "R", function()
+k:bind({}, "R", function()
   hs.reload()
 end)
 hs.alert.show("HS Config Loaded", nil, nil, 10)
