@@ -64,8 +64,9 @@ k:bind({}, 'r', "Reload", function() hs.reload() end)
 
 function toggleApplication(app) 
   if app:isHidden() then
+    local diskName = app:path()
     app:unhide() 
-    hs.application.launchOrFocus(app:name())
+    hs.application.launchOrFocus(diskName)
   else 
     app:hide()
   end
@@ -88,8 +89,13 @@ end
 -- Keybindings here work when hyper key (caps lock) is held down
 singleapps = {
   {'s', 'Simulator'},
-  {'c', 'Code'},
-  {'x', 'Xcode'}
+  {'c', 'code'},
+  {'x', 'Xcode'},
+  {'p', 'Preview'},
+  {'h', 'Haskell'},
+  {'m', 'Spotify'},
+  {'t', 'Twitter'}
+
 }
 
 for i, app in ipairs(singleapps) do
@@ -97,9 +103,9 @@ for i, app in ipairs(singleapps) do
 end
 
 -- App Vars
-local browser = hs.window.find("Safari")
-local iterm   = hs.window.find("iTerm2")
-local code    = hs.window.find("Visual Studio Code")
+local browser = hs.application'Safari'
+local iterm   = hs.application'iTerm2'
+local code    = hs.application'code':mainWindow()
 local finder  = hs.window.find("Finder")
 local xcode   = hs.window.find("Xcode")
 local unity   = hs.window.find("Unity")
@@ -224,10 +230,10 @@ local layout_code = {
   {"Safari",  nil,         iMac, hs.layout.left30, nil, nil},
   {"Xcode",   nil,         iMac, hs.layout.right70, nil, nil}
 }
-local layout_unity = {
-  {"Safari",   nil,        iMac, hs.layout.left30, nil, nil},
-  {hs.application'Unity':title(),    nil,        iMac, hs.layout.right70, nil, nil}
-}
+-- local layout_unity = {
+--   {"Safari",   nil,        iMac, hs.layout.left30, nil, nil},
+--   {hs.application'Unity':title(),    nil,        iMac, hs.layout.right70, nil, nil}
+-- }
 
 -- Hotkeys to apply layouts & position windows
 hs.hotkey.bind(mash, "x", function() 
